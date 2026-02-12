@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOP PREDECTOR</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {
+    background: #000;
+    color: #00ff00;
+    font-family: 'Orbitron', sans-serif;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+h1 {
+    position: absolute;
+    top: 20px;
+    font-size: 3em;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+}
+button {
+    padding: 12px 25px;
+    font-size: 1em;
+    background: none;
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 8px;
+}
+button:hover {
+    background: #00ff00;
+    color: #000;
+}
+#loginPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0,0,0,0.9);
+    padding: 30px;
+    border: 2px solid #00ff00;
+    border-radius: 15px;
+}
+#keyInput {
+    padding: 10px;
+    background: black;
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    border-radius: 5px;
+    width: 220px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+#errorMessage {
+    color: red;
+    display: none;
+}
+#timerBox {
+    display: none;
+    position: fixed;
+    background: rgba(0,0,0,0.9);
+    padding: 20px;
+    border: 2px solid #00ff00;
+    border-radius: 15px;
+    width: 320px;
+    text-align: center;
+}
+#randomWord {
+    font-size: 2em;
+    color: red;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+<h1>TOP PREDECTOR</h1>
+
+<div id="loginPage">
+    <h2>ENTER ACCESS KEY</h2>
+    <input type="text" id="keyInput" placeholder="Enter Key">
+    <button onclick="checkKey()">Submit Key</button>
+    <button onclick="getKey()">GET KEY</button>
+    <div id="errorMessage">Wrong Key</div>
+</div>
+
+<button id="startBtn" style="display:none;" onclick="toggleTimerBox()">START</button>
+
+<div id="timerBox">
+    <h3>PVT NUMBER</h3>
+    <div id="period1m"></div>
+    <div id="timer1m"></div>
+    <div id="randomWord"></div>
+</div>
+
+<script>
+// Matrix Background
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+const chars = '0101TOPPREDECTOR';
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
+
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ff00';
+    ctx.font = fontSize + 'px monospace';
+    drops.forEach((y, i) => {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(text, i * fontSize, y * fontSize);
+        if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    });
+}
+setInterval(drawMatrix, 33);
+
+// Key Check
+function checkKey() {
+    const keyInput = document.getElementById('keyInput').value;
+    if (keyInput === 'TOPPREDECTOR999') {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('startBtn').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+    } else {
+        document.getElementById('errorMessage').style.display = 'block';
+    }
+}
+
+// Telegram Link
+function getKey() {
+    window.location.href = "https://t.me/toppredector";
+}
+
+// Timer Logic
+let timerInterval = null;
+
+function toggleTimerBox() {
+    const box = document.getElementById("timerBox");
+    if (box.style.display === "none") {
+        box.style.display = "block";
+        startTimer();
+    } else {
+        box.style.display = "none";
+    }
+}
+
+function startTimer() {
+    if (timerInterval) return;
+
+    timerInterval = setInterval(() => {
+        const now = new Date();
+
+        // Date part (YYYYMMDD)
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const dateStr = `${year}${month}${day}`;
+
+        // Current total minutes (local)
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        // Base time 6:35 PM = 18*60 + 35
+        const baseMinutes = 18 * 60 + 35;
+
+        let diff = currentMinutes - baseMinutes;
+        if (diff < 0) diff += 1440; // previous day
+
+        // Base number at 6:35 PM = 10786
+        const runningNumber = 10786 + diff;
+
+        // Final Period Number
+        const finalPeriod = dateStr + "1000" + runningNumber;
+
+        document.getElementById("period1m").textContent = finalPeriod;
+
+        // Countdown Timer
+        const seconds = now.getSeconds();
+        const remaining = 59 - seconds;
+        document.getElementById("timer1m").textContent =
+            "00 : " + String(remaining).padStart(2, '0');
+
+        // Random Big/Small every minute
+        if (seconds === 0) {
+            const words = ["Big", "Small"];
+            document.getElementById("randomWord").textContent =
+                words[Math.floor(Math.random() * 2)];
+        }
+
+    }, 1000);
+}
+</script>
+
+</body>
+</html>
