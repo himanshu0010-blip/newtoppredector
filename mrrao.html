@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RAO SAHAB AI - MRBEAST STYLE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto+Mono:wght@700&family=Passion+One:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --beast-blue: #00c3ff; --beast-pink: #ff00ff; --beast-yellow: #ffee00;
+            --bg: #000000; --card: #111; 
+        }
+        
+        /* MRBEAST / KOMIKA STYLE FONT */
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Bangers', cursive; 
+            letter-spacing: 2px;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* Mono style for Copy-Paste */
+        .mono-text { font-family: 'Roboto Mono', monospace !important; letter-spacing: 0px; font-size: 1.1rem; }
+
+        #guard-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000000; display: flex; align-items: center; justify-content: center; }
+        .login-card { 
+            background: var(--card); border: 6px solid #fff; padding: 40px 30px; border-radius: 40px; 
+            width: 92%; max-width: 400px; text-align: center; box-shadow: 12px 12px 0px var(--beast-blue); 
+        }
+        
+        #main_app, #admin_panel { display: none; height: 100vh; overflow-y: auto; padding-bottom: 120px; }
+        .header { 
+            text-align: center; padding: 20px; border-bottom: 6px solid #000; 
+            background: var(--beast-blue); color: #fff; position: sticky; top: 0; z-index: 1000;
+            text-shadow: 4px 4px 0px #000;
+        }
+        .header h1 { font-size: 2.2rem; }
+
+        .card { background: var(--card); border: 4px solid #fff; border-radius: 35px; padding: 20px; margin: 15px; box-shadow: 8px 8px 0px var(--beast-pink); }
+
+        input, select { 
+            width: 100%; padding: 15px; background: #fff; border: 4px solid #000; border-radius: 20px; 
+            color: #000; margin-bottom: 15px; text-align: center; font-size: 1.4rem; font-family: 'Bangers';
+        }
+
+        .btn-rao { 
+            padding: 15px; border: 4px solid #000; border-radius: 20px; font-family: 'Bangers'; 
+            font-size: 1.8rem; cursor: pointer; width: 100%; transition: 0.2s; text-transform: uppercase; 
+            box-shadow: 6px 6px 0px #000; text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+        .btn-beast { background: var(--beast-yellow); color: #000; }
+        .btn-rao:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #000; }
+        
+        .timer-text { font-size: 5rem; text-align: center; color: var(--beast-yellow); -webkit-text-stroke: 3px #000; }
+        .prediction-text { font-size: 7rem; text-align: center; line-height: 1; margin: 15px 0; -webkit-text-stroke: 4px #000; text-shadow: 8px 8px 0px #000; }
+
+        .navbar { position: fixed; bottom: 0; width: 100%; background: #fff; display: flex; padding: 12px; border-top: 6px solid #000; justify-content: space-around; z-index: 1000; }
+        .nav-link { color: #000; font-size: 1.4rem; text-decoration: none; }
+        .nav-link.active { color: var(--beast-blue); }
+
+        .float-tg { position: fixed; bottom: 100px; right: 20px; background: #0088cc; width: 65px; height: 65px; border-radius: 25px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; z-index: 999; border: 4px solid #000; box-shadow: 6px 6px 0px #000; }
+        
+        /* Admin User Table */
+        .user-row { background: #222; padding: 15px; border-radius: 15px; border: 2px solid #fff; margin-bottom: 10px; font-size: 0.9rem; }
+        .copy-btn { background: var(--beast-blue); color: #000; border: 2px solid #000; padding: 5px 10px; border-radius: 10px; float: right; font-family: 'Bangers'; font-size: 0.8rem; cursor: pointer; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <a href="https://t.me/raosahabgamechanger" target="_blank" class="float-tg"><i class="fab fa-telegram-plane"></i></a>
+
+    <div id="guard-overlay">
+        <div class="login-card" id="login_screen">
+            <h2 style="font-size:3rem; color:var(--beast-yellow); -webkit-text-stroke:2px #000;">RAO SAHAB</h2>
+            <p style="font-size:1.2rem; color:var(--beast-blue); margin-bottom:25px;">NEURAL ENGINE V26</p>
+            <input type="text" id="u_name" placeholder="USERNAME" class="mono-text">
+            <input type="text" id="u_key" placeholder="ACCESS KEY" class="mono-text">
+            <button class="btn-rao btn-beast" onclick="handleLogin()">LET'S GO!</button>
+            <div onclick="openAdmin()" style="margin-top:25px; color:#333; cursor:pointer;">ADMIN</div>
+        </div>
+
+        <div class="login-card" id="admin_screen" style="display:none;">
+            <h2 style="color:var(--beast-pink);">MASTER OWNER</h2>
+            <input type="password" id="m_pass" placeholder="MASTER KEY" class="mono-text">
+            <button class="btn-rao" style="background:var(--beast-pink); color:#fff;" onclick="handleAdmin()">OPEN PANEL</button>
+            <button class="btn-rao" style="margin-top:10px; background:#444; color:#fff;" onclick="location.reload()">BACK</button>
+        </div>
+    </div>
+
+    <div id="main_app">
+        <div class="header"><h1>RAO SAHAB AI</h1></div>
+        <div class="timer-text" id="timer">30</div>
+        
+        <div class="card" style="text-align:center;">
+            <p style="font-size:1.8rem; color:var(--beast-blue);">CURRENT SIGNAL</p>
+            <div id="sig_out" class="prediction-text" style="color:#fff;">WAIT</div>
+            <p id="algo_log" style="color:var(--success); font-size:1.2rem;">CALCULATING...</p>
+        </div>
+
+        <div class="card">
+            <input type="text" id="bot_tk" placeholder="BOT TOKEN" class="mono-text">
+            <input type="text" id="chat_id" placeholder="CHAT ID" class="mono-text">
+            <button class="btn-rao btn-beast" id="sync_bot">SYNC TELEGRAM</button>
+        </div>
+    </div>
+
+    <div id="admin_panel">
+        <div class="header" style="background:var(--beast-pink);"><h1>KEY MANAGER</h1></div>
+        <div class="card">
+            <input type="text" id="new_u" placeholder="TARGET USERNAME" class="mono-text">
+            <select id="new_d">
+                <option value="1">1 DAY ACCESS</option>
+                <option value="7">7 DAYS ACCESS</option>
+                <option value="30">30 DAYS ACCESS</option>
+            </select>
+            <button class="btn-rao" style="background:var(--success); color:#000;" onclick="generateKey()">GENERATE KEY</button>
+        </div>
+        <div class="card" id="key_list_box"></div>
+        <button class="btn-rao" style="background:var(--danger); width:90%; margin:20px auto; display:block; color:#fff;" onclick="location.reload()">LOGOUT</button>
+    </div>
+
+<script>
+    let vault = JSON.parse(localStorage.getItem('rao_vault_beast')) || {};
+    let state = { bot: false, current: '', prev: '' };
+
+    // --- SECURITY & ADMIN ---
+    function openAdmin() { document.getElementById('login_screen').style.display='none'; document.getElementById('admin_screen').style.display='block'; }
+    function handleAdmin() {
+        if(document.getElementById('m_pass').value === 'RAO_OWNER_777') {
+            document.getElementById('guard-overlay').style.display='none';
+            document.getElementById('admin_panel').style.display='block';
+            renderKeys();
+        } else { alert("WRONG PASSWORD"); }
+    }
+
+    function generateKey() {
+        const u = document.getElementById('new_u').value;
+        const d = document.getElementById('new_d').value;
+        if(!u) return;
+        const key = "RAO-" + Math.floor(1000 + Math.random() * 9000);
+        vault[u] = { key: key, exp: Date.now() + (d * 24 * 60 * 60 * 1000) };
+        localStorage.setItem('rao_vault_beast', JSON.stringify(vault));
+        renderKeys();
+        alert(`KEY CREATED!\nUser: ${u}\nKey: ${key}`);
+    }
+
+    function renderKeys() {
+        const box = document.getElementById('key_list_box');
+        box.innerHTML = '<h3 style="margin-bottom:15px; color:var(--beast-blue);">ACTIVE USERS:</h3>';
+        for(let u in vault) {
+            const expDate = new Date(vault[u].exp).toLocaleDateString();
+            box.innerHTML += `
+                <div class="user-row">
+                    <span class="mono-text">U: ${u} | K: ${vault[u].key}</span>
+                    <button class="copy-btn" onclick="copyKey('${u}', '${vault[u].key}')">COPY</button>
+                    <div style="font-size:0.7rem; color:#888; margin-top:5px;">Exp: ${expDate}</div>
+                </div>`;
+        }
+    }
+
+    function copyKey(u, k) {
+        const text = `Username: ${u}\nKey: ${k}\nLink: Your_Link_Here`;
+        navigator.clipboard.writeText(text);
+        alert("DETAILS COPIED!");
+    }
+
+    function handleLogin() {
+        const u = document.getElementById('u_name').value;
+        const k = document.getElementById('u_key').value;
+        if(vault[u] && vault[u].key === k && Date.now() < vault[u].exp) {
+            document.getElementById('guard-overlay').style.display='none';
+            document.getElementById('main_app').style.display='block';
+            initEngine();
+        } else { alert("ACCESS DENIED!"); }
+    }
+
+    // --- ENGINE CORE ---
+    function initEngine() {
+        document.getElementById('sync_bot').onclick = () => { state.bot = true; alert("BOT SYNCED! ✅"); };
+
+        setInterval(async () => {
+            const rem = 30 - (new Date().getSeconds() % 30);
+            document.getElementById('timer').innerText = rem;
+
+            if(rem === 28) {
+                try {
+                    const res = await fetch('https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?t=' + Date.now());
+                    const data = await res.json();
+                    const latest = data.data.list[0];
+                    const nextId = (BigInt(latest.issueNumber) + 1n).toString();
+
+                    const pred = (parseInt(latest.number) <= 4) ? 'BIG' : 'SMALL';
+                    state.current = pred;
+
+                    const sig = document.getElementById('sig_out');
+                    sig.innerText = pred;
+                    sig.style.color = (pred === 'BIG') ? 'var(--beast-blue)' : 'var(--beast-pink)';
+                    document.getElementById('algo_log').innerText = "AI PREDICTION SYNCED!";
+
+                    if(state.bot) broadcast(nextId, pred, latest);
+                } catch(e) {}
+            }
+        }, 1000);
+    }
+
+    async function broadcast(id, pred, last) {
+        const tk = document.getElementById('bot_tk').value;
+        const cid = document.getElementById('chat_id').value;
+        if(!tk || !cid) return;
+
+        const lastActual = parseInt(last.number) >= 5 ? 'BIG' : 'SMALL';
+        let status = "";
+        if(state.prev) {
+            status = (state.prev === lastActual) ? "✅ WIN WIN 💰💰" : "❌ LOSS 💀💀";
+        }
+
+        const msg = `👑 *RAO SAHAB AI (MRBEAST)* 👑\n\n` +
+                    (status ? `RESULT: ${lastActual}\nSTATUS: ${status}\n\n` : "") +
+                    `🎯 PERIOD: ${id.slice(-4)}\n` +
+                    `💥 PREDICTION: *${pred}*\n` +
+                    `🎰 NUMBERS: 1, 3, 7, 9\n\n` +
+                    `🔥 CHANNEL: [JOIN NOW](https://t.me/raosahabgamechanger)`;
+
+        state.prev = pred;
+        fetch(`https://api.telegram.org/bot${tk}/sendMessage?chat_id=${cid}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+    }
+
+    setInterval(() => { debugger; }, 500);
+</script>
+</body>
+</html>
